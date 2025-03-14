@@ -1,6 +1,5 @@
 import { SignedIn, UserButton } from "@clerk/clerk-react";
 import { MoonIcon, SunIcon } from "@heroicons/react/24/outline";
-import { UploadButton } from "../../App";
 
 function NavBar({ toggleTheme, theme }: {toggleTheme : ()=> void ,theme:string}) {
     return (
@@ -24,7 +23,6 @@ function NavBar({ toggleTheme, theme }: {toggleTheme : ()=> void ,theme:string})
               )}
             </button>
             <SignedIn>
-              <UploadButton theme={theme} />
               <UserButton />
             </SignedIn>
           </div>
