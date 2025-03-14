@@ -53,31 +53,28 @@ router.get('/files', async (req, res) => {
     const { folderPath } = req.query;
     const userId = req.auth.userId;
     const prefix = getUserPath(userId, folderPath) + '/';
-
     const params = {
       Bucket: process.env.S3_BUCKET,
       Prefix: prefix,
       Delimiter: '/'
     };
-
     const command = new ListObjectsV2Command(params);
     const data = await s3Client.send(command);
-
     const files = (data.Contents || []).map(file => ({
       name: file.Key.replace(prefix, ''),
+      key: file.Key,
       type: 'file',
       size: file.Size,
       lastModified: file.LastModified
     }));
-
     const folders = (data.CommonPrefixes || []).map(folder => ({
       name: folder.Prefix.replace(prefix, '').replace(/\/$/, ''),
+      key: folder.Prefix,
       type: 'folder'
     }));
-
     res.json([...folders, ...files]);
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -86,6 +83,9 @@ router.delete('/files', async (req, res) => {
   try {
     const { key } = req.body;
     const userId = req.auth.userId;
+    if (!key) {
+      return res.status(400).json({ error: 'Missing key parameter' });
+    }
 
     if (!key.startsWith(userId)) {
       return res.status(403).json({ error: 'Unauthorized' });
