@@ -1,5 +1,6 @@
 import { SignedIn, SignedOut, SignInButton, useAuth } from "@clerk/clerk-react";
 import { useEffect, useRef, useState } from 'react';
+
 import { FolderIcon, DocumentIcon, ArrowDownTrayIcon, TrashIcon} from '@heroicons/react/24/outline';
 import NavBar from "./components/NavBar";
 import Breadcrumbs from "./components/Breadcrumbs";
@@ -69,6 +70,7 @@ export default function App() {
 function FileBrowser({ theme }: {theme: string}) {
   type er = null | String;
 
+
   const [files, setFiles] = useState<FileItem[]>([]);
   const [currentFolder, setCurrentFolder] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -130,6 +132,7 @@ function FileBrowser({ theme }: {theme: string}) {
             currentFolder={currentFolder} // Pass currentFolder as prop
             onUploadComplete={() => fetchFiles(currentFolder)} // Add callback to refresh files
           />
+
         </div>
       </div>
 
@@ -203,6 +206,7 @@ function FileItem({ item, onNavigate, onDelete, theme }: { item: FileItem, onNav
     try {
       const token = await getToken();
       console.log("Fetched token for delete:", token);
+
       const response = await fetch(`http://localhost:3000/files`, {
         method: 'DELETE',
         headers: {
@@ -218,6 +222,7 @@ function FileItem({ item, onNavigate, onDelete, theme }: { item: FileItem, onNav
       }
 
       console.log("File deleted successfully on server");
+
       onDelete();
       setIsMenuOpen(false);
     } catch (error) {
@@ -245,17 +250,20 @@ function FileItem({ item, onNavigate, onDelete, theme }: { item: FileItem, onNav
     try {
       const token = await getToken();
       console.log("Fetched token for download:", token);
+
       const response = await fetch(`http://localhost:3000/download?key=${encodeURIComponent(item.key)}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
       if (!response.ok) {
         console.error("Download request failed with status:", response.status);
+
         throw new Error(`Server responded with status: ${response.status}`);
       }
 
       const { url } = await response.json();
       console.log("Download URL received:", url);
+
       window.open(url, '_blank');
       setIsMenuOpen(false);
     } catch (error) {
@@ -271,6 +279,7 @@ function FileItem({ item, onNavigate, onDelete, theme }: { item: FileItem, onNav
     setIsMenuOpen(!isMenuOpen);
   };
 
+
   const cardClasses = theme === 'dark' 
     ? 'border-gray-700 hover:bg-gray-700'
     : 'border-gray-200 hover:bg-gray-50';
@@ -279,6 +288,7 @@ function FileItem({ item, onNavigate, onDelete, theme }: { item: FileItem, onNav
     <div
       className={`group relative p-4 border rounded-lg cursor-pointer ${cardClasses}`}
       onDoubleClick={() => item.type === 'folder' && onNavigate(item.name)}
+
     >
       <div className="flex flex-col items-center text-center" onClick={toggleMenu}>
         {item.type === 'folder' ? (
@@ -301,11 +311,13 @@ function FileItem({ item, onNavigate, onDelete, theme }: { item: FileItem, onNav
           ref={menuRef}
           className={`absolute right-0 top-0 shadow-lg rounded-lg p-2 z-10 ${theme === 'dark' ? 'bg-gray-800 border border-gray-700' : 'bg-white'}`}
           onClick={(e) => e.stopPropagation()}
+
         >
           {item.type === 'file' && (
             <button 
               className={`flex items-center gap-2 w-full p-2 rounded ${theme === 'dark' ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}
               onClick={handleDownload}
+
             >
               <ArrowDownTrayIcon className="w-4 h-4 text-blue-500" />
               <span>Download</span>
@@ -314,6 +326,7 @@ function FileItem({ item, onNavigate, onDelete, theme }: { item: FileItem, onNav
           <button
             className={`flex items-center gap-2 w-full p-2 rounded ${theme === 'dark' ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}
             onClick={handleDelete}
+
           >
             <TrashIcon className="w-4 h-4 text-red-500" />
             <span>Delete</span>
@@ -329,4 +342,4 @@ function FileItem({ item, onNavigate, onDelete, theme }: { item: FileItem, onNav
       />  
     </div>
   );
-}
+
