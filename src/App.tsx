@@ -1,10 +1,8 @@
-import { SignedIn, SignedOut, SignInButton, UserButton, useAuth } from "@clerk/clerk-react";
+import { SignedIn, SignedOut, SignInButton, useAuth } from "@clerk/clerk-react";
 import { useEffect, useRef, useState } from 'react';
 import { FolderIcon, DocumentIcon, ArrowDownTrayIcon, TrashIcon, 
-         PlusIcon, FolderPlusIcon, SunIcon, MoonIcon } from '@heroicons/react/24/outline';
-
-// Define API base URL
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000';
+         PlusIcon, FolderPlusIcon} from '@heroicons/react/24/outline';
+import NavBar from "./assets/components/NavBar";
 
 interface FileItem {
   name: string;
@@ -43,7 +41,6 @@ export default function App() {
 
   return (
     <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
-      <h1>This is not work4wering</h1>
       <NavBar toggleTheme={toggleTheme} theme={theme} />
       <main className="p-6 max-w-7xl mx-auto">
         <SignedOut>
@@ -65,36 +62,36 @@ export default function App() {
   );
 }
 
-function NavBar({ toggleTheme, theme }: {toggleTheme : ()=> void ,theme:string}) {
-  return (
-    <nav className={`${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} shadow-sm border-b`}>
-      <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-        <h1 className={`text-xl font-bold flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-          <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-          </svg>
-          CloudNest
-        </h1>
-        <div className="flex items-center gap-4">
-          <button 
-            onClick={toggleTheme}
-            className={`p-2 rounded-full ${theme === 'dark' ? 'bg-gray-700 text-gray-200' : 'bg-gray-200 text-gray-700'}`}
-          >
-            {theme === 'dark' ? (
-              <SunIcon className="w-5 h-5" />
-            ) : (
-              <MoonIcon className="w-5 h-5" />
-            )}
-          </button>
-          <SignedIn>
-            <UploadButton theme={theme} />
-            <UserButton />
-          </SignedIn>
-        </div>
-      </div>
-    </nav>
-  );
-}
+// function NavBar({ toggleTheme, theme }: {toggleTheme : ()=> void ,theme:string}) {
+//   return (
+//     <nav className={`${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} shadow-sm border-b`}>
+//       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+//         <h1 className={`text-xl font-bold flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+//           <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+//             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+//           </svg>
+//           CloudNest
+//         </h1>
+//         <div className="flex items-center gap-4">
+//           <button 
+//             onClick={toggleTheme}
+//             className={`p-2 rounded-full ${theme === 'dark' ? 'bg-gray-700 text-gray-200' : 'bg-gray-200 text-gray-700'}`}
+//           >
+//             {theme === 'dark' ? (
+//               <SunIcon className="w-5 h-5" />
+//             ) : (
+//               <MoonIcon className="w-5 h-5" />
+//             )}
+//           </button>
+//           <SignedIn>
+//             <UploadButton theme={theme} />
+//             <UserButton />
+//           </SignedIn>
+//         </div>
+//       </div>
+//     </nav>
+//   );
+// }
 
 function FileBrowser({ theme }: {theme: string}) {
   type er = null | String;
@@ -110,15 +107,17 @@ function FileBrowser({ theme }: {theme: string}) {
       setIsLoading(true);
       setError(null);
       const token = await getToken();
-      const response = await fetch(`${API_BASE_URL}/files?folderPath=${encodeURIComponent(folderPath)}`, {
+      const response = await fetch(`http://localhost:3000/files?folderPath=${encodeURIComponent(folderPath)}`, {
+      // const response = await fetch(`http://localhost:3000/files`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
       if (!response.ok) {
         throw new Error(`Server responded with status: ${response.status}`);
       }
-      
+      // console.log(response)
       const data = await response.json();
+      console.log(data)
       setFiles(data);
     } catch (error) {
       console.error('Error fetching files:', error);
@@ -139,6 +138,7 @@ function FileBrowser({ theme }: {theme: string}) {
 
   const navigateToFolder = (folderName: string) => {
     const newPath = currentFolder ? `${currentFolder}/${folderName}` : folderName;
+    console.log("current folder is ", currentFolder)
     setCurrentFolder(newPath);
   };
 
@@ -218,9 +218,11 @@ function FileItem({ item, onNavigate, onDelete, theme }: { item: FileItem, onNav
   }, []);
 
   const handleDelete = async () => {
+    console.log("Delete button clicked for key:", item.key); // ADDED LOG
     try {
       const token = await getToken();
-      const response = await fetch(`${API_BASE_URL}/files`, {
+      console.log("Fetched token for delete:", token); // ADDED LOG
+      const response = await fetch(`http://localhost:3000/files`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -228,11 +230,13 @@ function FileItem({ item, onNavigate, onDelete, theme }: { item: FileItem, onNav
         },
         body: JSON.stringify({ key: item.key })
       });
-      
+
       if (!response.ok) {
+        console.error("Delete request failed with status:", response.status); // ADDED LOG
         throw new Error(`Server responded with status: ${response.status}`);
       }
-      
+
+      console.log("File deleted successfully on server"); // ADDED LOG
       onDelete();
       setIsMenuOpen(false);
     } catch (error) {
@@ -244,17 +248,21 @@ function FileItem({ item, onNavigate, onDelete, theme }: { item: FileItem, onNav
   };
 
   const handleDownload = async () => {
+    console.log("Download button clicked for key:", item.key); // ADDED LOG
     try {
       const token = await getToken();
-      const response = await fetch(`${API_BASE_URL}/download?key=${encodeURIComponent(item.key)}`, {
+      console.log("Fetched token for download:", token); // ADDED LOG
+      const response = await fetch(`http://localhost:3000/download?key=${encodeURIComponent(item.key)}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      
+
       if (!response.ok) {
+        console.error("Download request failed with status:", response.status); // ADDED LOG
         throw new Error(`Server responded with status: ${response.status}`);
       }
-      
+
       const { url } = await response.json();
+      console.log("Download URL received:", url); // ADDED LOG
       window.open(url, '_blank');
       setIsMenuOpen(false);
     } catch (error) {
@@ -300,7 +308,7 @@ function FileItem({ item, onNavigate, onDelete, theme }: { item: FileItem, onNav
             <button 
               className={`flex items-center gap-2 w-full p-2 rounded ${theme === 'dark' ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}
               onClick={(e) => {
-                e.stopPropagation();
+                e.preventDefault();
                 handleDownload();
               }}
             >
@@ -311,7 +319,7 @@ function FileItem({ item, onNavigate, onDelete, theme }: { item: FileItem, onNav
           <button
             className={`flex items-center gap-2 w-full p-2 rounded ${theme === 'dark' ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}
             onClick={(e) => {
-              e.stopPropagation();
+              e.preventDefault();
               handleDelete();
             }}
           >
@@ -371,7 +379,7 @@ function UploadButton({ theme }: {theme: string}) {
       setUploadProgress(0);
 
       const token = await getToken();
-      const response = await fetch(`${API_BASE_URL}/upload-url`, {
+      const response = await fetch(`http://localhost:3000/upload-url`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -572,7 +580,7 @@ function CreateFolderButton({ currentFolder, onCreated, theme }: { currentFolder
       setIsCreating(true);
       setError(null);
       const token = await getToken();
-      const response = await fetch(`${API_BASE_URL}/folders`, {
+      const response = await fetch(`http://localhost:3000/folders`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

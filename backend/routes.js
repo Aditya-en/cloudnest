@@ -9,8 +9,16 @@ import {
   GetObjectCommand
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-
-const s3Client = new S3Client({ region: process.env.AWS_REGION });
+import dotenv from "dotenv"
+dotenv.config()
+const creds = {
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+}
+console.log(creds)
+const s3Client = new S3Client({ region: process.env.AWS_REGION,   
+  credentials : creds
+ });
 const router = express.Router();
 
 router.use(requireAuth());
@@ -35,6 +43,7 @@ router.post('/upload-url', async (req, res) => {
     const url = await getSignedUrl(s3Client, command, { expiresIn: 60 * 5 });
     res.json({ url, key });
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: error.message });
   }
 });
@@ -68,6 +77,7 @@ router.get('/files', async (req, res) => {
 
     res.json([...folders, ...files]);
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: error.message });
   }
 });
@@ -88,6 +98,7 @@ router.delete('/files', async (req, res) => {
     await s3Client.send(command);
     res.json({ success: true });
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: error.message });
   }
 });
@@ -110,6 +121,7 @@ router.get('/download', async (req, res) => {
     const url = await getSignedUrl(s3Client, command, { expiresIn: 60 * 5 });
     res.json({ url });
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: error.message });
   }
 });
@@ -128,6 +140,7 @@ router.post('/folders', async (req, res) => {
     await s3Client.send(command);
     res.json({ success: true, key });
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: error.message });
   }
 });
@@ -158,6 +171,7 @@ router.put('/files/rename', async (req, res) => {
 
     res.json({ success: true });
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: error.message });
   }
 });
