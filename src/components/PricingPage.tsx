@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { SignInButton, useAuth } from '@clerk/clerk-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import NavBar from './NavBar';
 
 const PricingPage = () => {
   const { isSignedIn } = useAuth();
-  const navigate = useNavigate();
   const [theme, setTheme] = useState(() => {
     if (typeof window !== 'undefined') {
       const storedTheme = localStorage.getItem('theme');

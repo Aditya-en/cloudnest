@@ -36,7 +36,7 @@ export default function UploadButton({ theme, currentFolder, onUploadComplete }:
         }
   
         const data = await response.json();
-        const { url, key } = data;
+        const { url, key: _key  } = data;
   
         if (!url) {
           throw new Error('No upload URL received from server');

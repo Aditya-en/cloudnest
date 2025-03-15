@@ -342,4 +342,4 @@ function FileItem({ item, onNavigate, onDelete, theme }: { item: FileItem, onNav
       />  
     </div>
   );
-
+}
