@@ -21,7 +21,7 @@ export default function CreateFolderButton({ currentFolder, onCreated, theme }: 
         setIsCreating(true);
         setError(null);
         const token = await getToken();
-        const response = await fetch(`http://localhost:3000/folders`, {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/folders`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

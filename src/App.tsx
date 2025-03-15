@@ -82,7 +82,7 @@ function FileBrowser({ theme }: {theme: string}) {
       setIsLoading(true);
       setError(null);
       const token = await getToken();
-      const response = await fetch(`http://localhost:3000/files?folderPath=${encodeURIComponent(folderPath)}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/files?folderPath=${encodeURIComponent(folderPath)}`, {
       // const response = await fetch(`http://localhost:3000/files`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -207,7 +207,7 @@ function FileItem({ item, onNavigate, onDelete, theme }: { item: FileItem, onNav
       const token = await getToken();
       console.log("Fetched token for delete:", token);
 
-      const response = await fetch(`http://localhost:3000/files`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/files`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -251,7 +251,7 @@ function FileItem({ item, onNavigate, onDelete, theme }: { item: FileItem, onNav
       const token = await getToken();
       console.log("Fetched token for download:", token);
 
-      const response = await fetch(`http://localhost:3000/download?key=${encodeURIComponent(item.key)}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/download?key=${encodeURIComponent(item.key)}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 

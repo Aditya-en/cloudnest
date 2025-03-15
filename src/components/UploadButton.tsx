@@ -19,7 +19,7 @@ export default function UploadButton({ theme, currentFolder, onUploadComplete }:
         setUploadProgress(0);
   
         const token = await getToken();
-        const response = await fetch(`http://localhost:3000/upload-url`, {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/upload-url`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
