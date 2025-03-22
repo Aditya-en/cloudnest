@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SignInButton, useAuth } from "@clerk/clerk-react";
 import { motion } from 'framer-motion';
+import { MoonIcon, SunIcon } from '@heroicons/react/24/outline';
 
 export default function LandingPage() {
   const { isSignedIn } = useAuth();
@@ -97,7 +98,11 @@ export default function LandingPage() {
                 onClick={toggleTheme}
                 className={`p-2 rounded-full ${theme === 'dark' ? 'bg-gray-700 text-yellow-300' : 'bg-gray-100 text-gray-700'}`}
               >
-                {theme === 'dark' ? '☀️' : '🌙'}
+                {theme === 'dark' ? (
+                <SunIcon className="w-5 h-5" />
+              ) : (
+                <MoonIcon className="w-5 h-5" />
+              )}
               </button>
               <SignInButton mode="modal">
                 <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
